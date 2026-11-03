@@ -90,7 +90,7 @@ export function CharacterPage({ id }: { id: string }) {
               {w.remixOf && <div className="remix-credit"><Icon name="remix" size={14} /> World remixed from <Credits ids={[w.remixOf.creatorId]} label="" /></div>}
               <div className="row gap">
                 {mine && <button className="btn ghost sm" onClick={() => s.go({ name: 'character-create', editId: c.id, step: 2 })}><Icon name="edit" size={14} /> Edit world</button>}
-                {!mine && <button className="btn ghost sm" onClick={() => { s.remixWorld(w.id); s.go({ name: 'profile', creatorId: ME }); }}><Icon name="remix" size={14} /> Remix world</button>}
+                {!mine && <button className="btn ghost sm" onClick={() => { const nw = s.remixWorld(w.id); s.go({ name: 'world', id: nw.id }); }}><Icon name="remix" size={14} /> Remix world</button>}
               </div>
             </>
           ) : (

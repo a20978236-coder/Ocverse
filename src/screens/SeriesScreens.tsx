@@ -89,7 +89,10 @@ export function SeriesDetail({ id }: { id: string }) {
     s.upsertSeries({ ...x, episodeIds: ids });
     ids.forEach((eid, k) => {
       const v = s.videos.find((vv) => vv.id === eid);
-      if (v && v.episode !== k + 1) s.updateVideo({ ...v, episode: k + 1 });
+      if (!v || v.episode === k + 1) return;
+      // auto-named episodes ("Show — Episode 2") follow their new position
+      const auto = v.title === `${x.title} — Episode ${v.episode}`;
+      s.updateVideo({ ...v, episode: k + 1, title: auto ? `${x.title} — Episode ${k + 1}` : v.title });
     });
   };
   return (

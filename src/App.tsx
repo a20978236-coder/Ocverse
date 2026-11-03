@@ -10,6 +10,8 @@ import { StoryScreen } from './screens/StoryScreen';
 import { Watch } from './screens/Watch';
 import { Chat } from './screens/Chat';
 import { Profile } from './screens/Profile';
+import { WorldEdit } from './screens/WorldEdit';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function Screen() {
   const { route: r } = useStore();
@@ -21,15 +23,17 @@ function Screen() {
     case 'character':
       return <CharacterPage key={r.id} id={r.id} />;
     case 'story':
-      return <StoryScreen key={r.editVideoId ?? r.seriesId ?? 'new'} {...r} />;
+      return <StoryScreen key={`${r.editVideoId ?? ''}|${r.seriesId ?? ''}|${(r.characterIds ?? []).join(',')}`} {...r} />;
+    case 'world':
+      return <WorldEdit key={r.id} id={r.id} />;
     case 'series-new':
       return <SeriesNew />;
     case 'series':
-      return <SeriesDetail id={r.id} />;
+      return <SeriesDetail key={r.id} id={r.id} />;
     case 'watch':
       return <Watch key={r.videoId} videoId={r.videoId} />;
     case 'chat':
-      return <Chat characterId={r.characterId} />;
+      return <Chat key={r.characterId ?? 'list'} characterId={r.characterId} />;
     case 'profile':
       return <Profile key={r.creatorId} creatorId={r.creatorId} />;
   }
@@ -42,7 +46,9 @@ export default function App() {
       <TopBar />
       {route.name === 'tab' && <MiniTabs />}
       <main className={`main route-${route.name}${route.name === 'tab' ? ` tab-${route.tab}` : ''}`}>
-        <Screen />
+        <ErrorBoundary resetKey={JSON.stringify(route)}>
+          <Screen />
+        </ErrorBoundary>
       </main>
     </div>
   );

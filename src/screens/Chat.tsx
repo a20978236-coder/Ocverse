@@ -12,7 +12,9 @@ export function Chat({ characterId }: { characterId?: string }) {
   const end = useRef<HTMLDivElement>(null);
   const thread = s.chats.find((t) => t.characterId === active);
   const c = active ? s.character(active) : undefined;
-  useEffect(() => end.current?.scrollIntoView({ behavior: 'smooth' }), [thread?.messages.length]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [thread?.messages.length]);
 
   if (!c) {
     const others = s.characters.filter((x) => !s.chats.some((t) => t.characterId === x.id));

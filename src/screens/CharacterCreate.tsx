@@ -5,18 +5,11 @@ import { parseCharacter, parseWorld } from '../ai/parse';
 import { Pedestal } from '../components/Pedestal';
 import { Backdrop, BACKGROUNDS, SubHeader } from '../components/Shell';
 import { Icon } from '../components/Icon';
-import { fileToDataUrl, styleLabel, uid } from '../util';
+import { WorldForm } from '../components/WorldForm';
+import { fileToDataUrl, styleLabel, toHex, uid } from '../util';
 
 const PRESET_VOICES = ['Soft alto', 'Bright tenor', 'Gravelly baritone', 'Whispery mezzo', 'Robotic', 'Childlike', 'Regal'];
 
-let _ctx: CanvasRenderingContext2D | null = null;
-export function toHex(color: string): string {
-  _ctx ??= document.createElement('canvas').getContext('2d');
-  if (!_ctx) return '#888888';
-  _ctx.fillStyle = '#000';
-  _ctx.fillStyle = color;
-  return String(_ctx.fillStyle);
-}
 
 export function CharacterCreate({ editId, step: initialStep }: { editId?: string; step?: 1 | 2 }) {
   const s = useStore();
@@ -241,23 +234,7 @@ export function CharacterCreate({ editId, step: initialStep }: { editId?: string
                   </button>
                 </div>
                 {world && (
-                  <div className="glass">
-                    <div className="world-swatch" style={{ background: `radial-gradient(120% 90% at 50% 10%, ${world.palette[0]}, ${world.palette[1]})` }}>
-                      <span>{world.name}</span>
-                    </div>
-                    <div className="row gap">
-                      <label className="swatch"><input type="color" value={toHex(world.palette[0])} onChange={(e) => setWorld({ ...world, palette: [e.target.value, world.palette[1]] })} /><span>sky</span></label>
-                      <label className="swatch"><input type="color" value={toHex(world.palette[1])} onChange={(e) => setWorld({ ...world, palette: [world.palette[0], e.target.value] })} /><span>ground</span></label>
-                    </div>
-                    <label className="field-label">Name</label>
-                    <input className="input" value={world.name} onChange={(e) => setWorld({ ...world, name: e.target.value })} />
-                    <label className="field-label">What it looks like</label>
-                    <textarea className="input" rows={3} value={world.looks} onChange={(e) => setWorld({ ...world, looks: e.target.value })} />
-                    <label className="field-label">Mood</label>
-                    <textarea className="input" rows={2} value={world.mood} onChange={(e) => setWorld({ ...world, mood: e.target.value })} />
-                    <label className="field-label">Rules <span className="muted">(one per line)</span></label>
-                    <textarea className="input" rows={3} value={world.rules.join('\n')} onChange={(e) => setWorld({ ...world, rules: e.target.value.split('\n') })} />
-                  </div>
+                  <WorldForm world={world} onChange={setWorld} />
                 )}
                 <button className="btn primary big" onClick={finish}>{world ? 'Finish — open character page' : 'Skip world for now'}</button>
               </>

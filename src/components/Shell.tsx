@@ -97,9 +97,16 @@ export function Credits({ ids, label = 'by' }: { ids: string[]; label?: string }
       {ids.map((id, i) => (
         <span key={id}>
           {i > 0 && (i === ids.length - 1 ? ' & ' : ', ')}
-          <button className="link" onClick={(e) => { e.stopPropagation(); go({ name: 'profile', creatorId: id }); }}>
+          {/* span, not button: credits sit inside clickable cards and buttons can't nest */}
+          <span
+            role="link"
+            tabIndex={0}
+            className="link"
+            onClick={(e) => { e.stopPropagation(); go({ name: 'profile', creatorId: id }); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); go({ name: 'profile', creatorId: id }); } }}
+          >
             @{creator(id)?.handle ?? 'unknown'}
-          </button>
+          </span>
         </span>
       ))}
     </span>

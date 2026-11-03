@@ -11,6 +11,7 @@ export type Route =
   | { name: 'tab'; tab: MiniTab }
   | { name: 'character-create'; editId?: string; step?: 1 | 2 }
   | { name: 'character'; id: string }
+  | { name: 'world'; id: string }
   | { name: 'story'; seriesId?: string; characterIds?: string[]; editVideoId?: string }
   | { name: 'series-new' }
   | { name: 'series'; id: string }

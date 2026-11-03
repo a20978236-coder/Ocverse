@@ -22,7 +22,7 @@ export function StoryScreen({ seriesId: initialSeries, characterIds: initialChar
   const [len, setLen] = useState(editing?.lengthMin ?? 3);
   const [seriesId, setSeriesId] = useState<string>(editing?.seriesId ?? initialSeries ?? '');
   const firstWorld = s.character(chars[0] ?? '')?.worldId ?? '';
-  const [worldId, setWorldId] = useState<string>(editing?.worldId ?? '');
+  const [worldId, setWorldId] = useState<string | null>(editing ? editing.worldId ?? '' : null);
   const [picker, setPicker] = useState(false);
   const [audioSheet, setAudioSheet] = useState(false);
   const [log, setLog] = useState<string[]>([]);
@@ -33,7 +33,7 @@ export function StoryScreen({ seriesId: initialSeries, characterIds: initialChar
   const audioRef = useRef<HTMLInputElement>(null);
 
   const mySeries = s.series.filter((x) => x.creatorId === ME || x.creditIds.includes(ME) || x.id === seriesId);
-  const effectiveWorld = worldId || firstWorld;
+  const effectiveWorld = worldId ?? firstWorld;
   const credits = useMemo(() => [...new Set([ME, ...chars.map((id) => s.character(id)?.creatorId).filter(Boolean) as string[]])], [chars, s]);
   const isCollab = credits.length > 1;
 

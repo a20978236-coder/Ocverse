@@ -8,7 +8,7 @@ import { Figure } from './Figure';
  * through the story beats as captions. Real generated video would replace
  * the stage, keeping the same chrome.
  */
-export function VideoFrame({ v, playing, onEnded, compact }: { v: Video; playing: boolean; onEnded?: () => void; compact?: boolean }) {
+export function VideoFrame({ v, playing, onEnded, compact, loop }: { v: Video; playing: boolean; onEnded?: () => void; compact?: boolean; loop?: boolean }) {
   const { character, world } = useStore();
   const w = world(v.worldId);
   const chars = v.characterIds.map((id) => character(id)).filter(Boolean) as NonNullable<ReturnType<typeof character>>[];
@@ -17,25 +17,34 @@ export function VideoFrame({ v, playing, onEnded, compact }: { v: Video; playing
   // compressed preview timeline: ~3s per beat
   const total = Math.max(1, beats.length) * 3000;
 
-  useEffect(() => setT(0), [v.id]);
+  useEffect(() => {
+    setT(0);
+  }, [v.id]);
   useEffect(() => {
     if (!playing) return;
-    const start = performance.now() - t;
+    // resuming after the end replays from the start
+    let start = performance.now() - (t >= total ? 0 : t);
     let raf = 0;
-    const loop = (now: number) => {
+    const step = (now: number) => {
       const nt = now - start;
       if (nt >= total) {
+        if (loop) {
+          start = now;
+          setT(0);
+          raf = requestAnimationFrame(step);
+          return;
+        }
         setT(total);
         onEnded?.();
         return;
       }
       setT(nt);
-      raf = requestAnimationFrame(loop);
+      raf = requestAnimationFrame(step);
     };
-    raf = requestAnimationFrame(loop);
+    raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, v.id, total]);
+  }, [playing, v.id, total, loop]);
 
   const beat = beats[Math.min(beats.length - 1, Math.floor((t / total) * beats.length))] ?? '';
   const [a, b] = w?.palette ?? ['#1a2a10', '#05070a'];

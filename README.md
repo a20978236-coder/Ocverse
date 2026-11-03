@@ -2,10 +2,34 @@
 
 Original-character animation app: dark theme, lime accents, cinematic feel.
 
+## Launch & preview
+
+Requires Node 18+.
+
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+
+# development (hot reload)
+npm run dev                 # → http://localhost:5173
+
+# production build + local preview of the finished app
 npm run build
+npx vite preview            # → http://localhost:4173
+```
+
+Open the URL in a browser. On a phone on the same Wi-Fi, run `npm run dev -- --host` and open the
+"Network" address it prints. The app starts with demo creators and characters. Use **Profile → Reset demo data** to start fresh.
+
+## Testing
+
+`e2e/smoke.cjs` drives the real app in Chromium. It checks navigation, character and world creation,
+the pedestal transport and idle animation, the story box, collabs, remixes, series, and character consistency.
+For consistency it compares each character's rendered figure across the pedestal, videos, collabs and remixes.
+
+```bash
+npm i -D playwright && npx playwright install chromium   # one-time
+npm run build && npx vite preview &                      # serve on :4173
+npm run test:e2e                                         # prints PASS/FAIL per check
 ```
 
 ## Structure

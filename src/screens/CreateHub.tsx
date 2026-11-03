@@ -55,7 +55,7 @@ export function CreateHub() {
                 key={w.id}
                 className="world-tile"
                 style={{ background: `radial-gradient(120% 90% at 50% 10%, ${w.palette[0]}, ${w.palette[1]})` }}
-                onClick={() => (w.characterId ? s.go({ name: 'character-create', editId: w.characterId, step: 2 }) : undefined)}
+                onClick={() => s.go({ name: 'world', id: w.id })}
               >
                 <b>{w.name}</b>
                 {w.remixOf && <span className="sm"><Icon name="remix" size={12} /> remix</span>}

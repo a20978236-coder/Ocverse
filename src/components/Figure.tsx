@@ -67,7 +67,7 @@ export function Figure({ c, bust, alive = true, className = '' }: Props) {
 
   return (
     <svg
-      className={`figure k-${k} ${alive ? 'alive' : ''} ${className}`}
+      className={['figure', `k-${k}`, alive && 'alive', className].filter(Boolean).join(' ')}
       viewBox={bust ? '46 18 108 108' : '0 0 200 360'}
       style={vars}
       role="img"

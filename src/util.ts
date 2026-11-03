@@ -26,3 +26,14 @@ export function timeAgo(t: number): string {
 }
 
 export const fmtLen = (m: number) => `${m}:00`;
+
+let _ctx: CanvasRenderingContext2D | null = null;
+/** Normalise any CSS colour (hsl, names…) to #rrggbb for <input type="color">. */
+export function toHex(color: string): string {
+  _ctx ??= document.createElement('canvas').getContext('2d');
+  if (!_ctx) return '#888888';
+  _ctx.fillStyle = '#000';
+  _ctx.fillStyle = color;
+  const v = String(_ctx.fillStyle);
+  return /^#[0-9a-f]{6}$/i.test(v) ? v : '#888888';
+}

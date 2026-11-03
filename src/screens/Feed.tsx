@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useStore } from '../store';
+import { ME, useStore } from '../store';
 import type { Video } from '../types';
 import { VideoFrame } from '../components/VideoFrame';
 import { Avatar } from '../components/Figure';
@@ -38,10 +38,11 @@ function FeedItem({ v }: { v: Video }) {
   }, []);
   const chars = v.characterIds.map(s.character).filter(Boolean) as NonNullable<ReturnType<typeof s.character>>[];
   const series = v.seriesId ? s.series.find((x) => x.id === v.seriesId) : undefined;
+  const remixable = chars.find((c) => c.creatorId !== ME);
   return (
     <div className="feed-item" ref={ref}>
       <div className="feed-player" onClick={() => s.go({ name: 'watch', videoId: v.id })}>
-        <VideoFrame v={v} playing={visible} />
+        <VideoFrame v={v} playing={visible} loop />
       </div>
       <div className="feed-info">
         {series && <div className="feed-series"><Icon name="series" size={14} /> {series.title} · Episode {v.episode}</div>}
@@ -58,7 +59,11 @@ function FeedItem({ v }: { v: Video }) {
       <div className="feed-rail">
         <button onClick={() => s.like(v.id)}><Icon name="heart" size={24} /><span>{v.likes.toLocaleString()}</span></button>
         <button onClick={() => s.go({ name: 'story', characterIds: v.characterIds })}><Icon name="collab" size={24} /><span>Collab</span></button>
-        {chars[0] && <button onClick={() => s.go({ name: 'character', id: chars[0].id })}><Icon name="remix" size={24} /><span>Remix</span></button>}
+        {remixable && (
+          <button onClick={() => { const nc = s.remixCharacter(remixable.id); s.go({ name: 'character-create', editId: nc.id }); }} aria-label={`Remix ${remixable.name}`}>
+            <Icon name="remix" size={24} /><span>Remix</span>
+          </button>
+        )}
         <span className="rail-len">{fmtLen(v.lengthMin)}</span>
       </div>
     </div>
